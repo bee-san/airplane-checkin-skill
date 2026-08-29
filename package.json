@@ -2,7 +2,7 @@
   "name": "ana-checkin-playwright",
   "version": "1.0.0",
   "private": false,
-  "description": "Privacy-conscious ANA online check-in automation with explicit declaration guards",
+  "description": "Guarded Chromium automation for privacy-conscious ANA online check-in",
   "type": "module",
   "scripts": {
     "status": "node src/ana-checkin.mjs status",

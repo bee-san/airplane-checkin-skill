@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="470" viewBox="0 0 1040 470" role="img" aria-labelledby="title desc">
+  <title id="title">Synthetic terminal demonstration</title>
+  <desc id="desc">A terminal shows the status command returning checked-in and boarding-pass availability booleans without revealing booking or identity information.</desc>
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="14" stdDeviation="18" flood-color="#05102a" flood-opacity="0.34"/>
+    </filter>
+  </defs>
+  <rect width="1040" height="470" rx="24" fill="#edf5fb"/>
+  <g transform="translate(45 36)" filter="url(#shadow)">
+    <rect width="950" height="390" rx="18" fill="#071427"/>
+    <path d="M18 0h914a18 18 0 0 1 18 18v42H0V18A18 18 0 0 1 18 0Z" fill="#122743"/>
+    <circle cx="28" cy="30" r="7" fill="#ff718d"/>
+    <circle cx="52" cy="30" r="7" fill="#ffbe55"/>
+    <circle cx="76" cy="30" r="7" fill="#4ed3a5"/>
+    <text x="475" y="37" text-anchor="middle" fill="#9db2cd" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="14">synthetic example · no booking data</text>
+    <g font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="21">
+      <text x="35" y="104" fill="#4ed3a5">$</text>
+      <text x="62" y="104" fill="#f6f9ff">npm run status</text>
+      <text x="35" y="154" fill="#91a9c7">{</text>
+      <text x="64" y="191" fill="#91a9c7">"action":</text>
+      <text x="190" y="191" fill="#ffbe55">"status"</text>
+      <text x="290" y="191" fill="#91a9c7">,</text>
+      <text x="64" y="228" fill="#91a9c7">"checkedIn":</text>
+      <text x="232" y="228" fill="#4ed3a5">true</text>
+      <text x="292" y="228" fill="#91a9c7">,</text>
+      <text x="64" y="265" fill="#91a9c7">"boardingPassAvailable":</text>
+      <text x="380" y="265" fill="#4ed3a5">true</text>
+      <text x="440" y="265" fill="#91a9c7">,</text>
+      <text x="64" y="302" fill="#91a9c7">"seatFound":</text>
+      <text x="232" y="302" fill="#4ed3a5">true</text>
+      <text x="35" y="339" fill="#91a9c7">}</text>
+    </g>
+  </g>
+</svg>
