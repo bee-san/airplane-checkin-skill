@@ -15,7 +15,7 @@
     "node": ">=20"
   },
   "dependencies": {
-    "playwright-core": "^1.55.0"
+    "playwright-core": "^1.62.1"
   },
   "license": "MIT",
   "repository": {
