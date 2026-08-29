@@ -1,0 +1,33 @@
+{
+  "name": "ana-checkin-playwright",
+  "version": "1.0.0",
+  "private": false,
+  "description": "Privacy-conscious ANA online check-in automation with explicit declaration guards",
+  "type": "module",
+  "scripts": {
+    "status": "node src/ana-checkin.mjs status",
+    "checkin": "node src/ana-checkin.mjs checkin",
+    "boarding-pass": "node src/ana-checkin.mjs boarding-pass",
+    "lint": "node --check src/ana-checkin.mjs",
+    "secret-scan": "bash scripts/secret-scan.sh"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "playwright-core": "^1.55.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bee-san/ana-checkin-playwright.git"
+  },
+  "keywords": [
+    "ana",
+    "airline",
+    "check-in",
+    "playwright",
+    "chromium",
+    "browser-automation"
+  ]
+}
