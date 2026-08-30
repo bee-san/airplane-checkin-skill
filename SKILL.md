@@ -1,6 +1,6 @@
 ---
 name: airplane-checkin
-description: "Use when checking in for flights now or scheduling safe airline check-in. Coordinates official-site browser work, timing, privacy, verification, and boarding-pass handling."
+description: "Use when checking in or scheduling airline check-in."
 version: 1.0.0
 author: Bee + Hermes Agent
 license: MIT
