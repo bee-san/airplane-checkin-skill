@@ -99,6 +99,27 @@ The script will not complete check-in unless all of these are true:
 
 If ANA changes its wording or page structure, the script stops rather than guessing.
 
+## Synthetic browser tests
+
+The repository includes privacy-safe HTML fixtures reconstructed from the stable IDs, roles, labels and visible wording observed during the reference check-in. They contain no real reservation, passenger, passport, itinerary or boarding-pass data.
+
+```bash
+npm test
+```
+
+The tests run the real Playwright workflow against a local HTTP server and verify:
+
+- read-only detection of `Not Checked-in` and completed states;
+- optional analytics and personalisation cookies remain off;
+- the explicit passenger-confirmation guard;
+- the review, baggage declaration and completed-page flow;
+- refusal when the declaration wording is missing;
+- refusal when **Next** remains disabled;
+- a submitted but unverified result is reported honestly and never retried;
+- refusal for unknown booking states and ANA's generic system error.
+
+No test contacts ANA or performs a live check-in. See the [fixture provenance and update rules](test/fixtures/README.md) for the reconstructed page contract.
+
 ## Requirements
 
 - Node.js 20 or newer
@@ -137,6 +158,7 @@ Before opening a public issue, remove reservation locators, names, travel-docume
 Contributions are welcome, especially synthetic test fixtures, safer state detection and documentation fixes. Start with [CONTRIBUTING.md](CONTRIBUTING.md) and run:
 
 ```bash
+npm test
 npm run lint
 npm run secret-scan
 git diff --check

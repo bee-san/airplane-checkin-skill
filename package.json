@@ -8,7 +8,8 @@
     "status": "node src/ana-checkin.mjs status",
     "checkin": "node src/ana-checkin.mjs checkin",
     "boarding-pass": "node src/ana-checkin.mjs boarding-pass",
-    "lint": "node --check src/ana-checkin.mjs",
+    "test": "node --test",
+    "lint": "node --check src/ana-checkin.mjs && node --check src/workflow.mjs && node --check test/ana-checkin.test.mjs",
     "secret-scan": "bash scripts/secret-scan.sh"
   },
   "engines": {

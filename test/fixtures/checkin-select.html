@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Check-in Target | Synthetic ANA fixture</title></head>
+<body>
+  <main>
+    <h1>Check-in Target</h1>
+    <section aria-labelledby="flight-heading">
+      <h2 id="flight-heading">Flights</h2>
+      <p>NH000 Synthetic Airport A to Synthetic Airport B</p>
+      <p>Seat 24A</p>
+    </section>
+    <section aria-labelledby="passenger-heading">
+      <h2 id="passenger-heading">Select Passenger</h2>
+      <p>Not Checked-in</p>
+      <label><input type="checkbox" checked> Passenger 1 is selected</label>
+    </section>
+    <form action="/webapps/checkin/checkin-review" method="get">
+      <input id="fixture-scenario" name="scenario" type="hidden" value="not-checked-in">
+      <button type="submit">Online Check-in</button>
+    </form>
+  </main>
+  <script>
+    document.querySelector('#fixture-scenario').value =
+      new URLSearchParams(location.search).get('scenario') || 'not-checked-in';
+  </script>
+</body>
+</html>

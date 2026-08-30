@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Check-in Confirmation | Synthetic ANA fixture</title></head>
+<body>
+  <main>
+    <h1>Check-in Confirmation</h1>
+    <p>NH000</p>
+    <p>Seat 24A</p>
+    <button id="button_throttle_online_checkin" type="button">Online Check-in</button>
+
+    <section id="baggage-dialog" role="dialog" aria-label="Baggage Information" hidden>
+      <h2>Baggage Information</h2>
+      <h3>Please confirm all the following, and click to place a check if you have read, understood and agreed to the items stated below. (Required)</h3>
+      <p>[Baggage]</p>
+      <p>{{DECLARATION_TEXT}}</p>
+      <h3>Items Which Are Not Permitted to Be Checked In or Carried on Board</h3>
+      <form action="/webapps/checkin/checkin-completed" method="get">
+        <input id="fixture-scenario" name="scenario" type="hidden" value="not-checked-in">
+        <input id="checkbox_consent-confirmation-checkbox" type="checkbox" aria-required="true">
+        <label for="checkbox_consent-confirmation-checkbox"><span class="c-form-element-checkbox__check"></span> I have read and agree</label>
+        <button id="fixture-next" type="submit" disabled>Next</button>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    const scenario = new URLSearchParams(location.search).get('scenario') || 'not-checked-in';
+    document.querySelector('#fixture-scenario').value = scenario;
+    document.querySelector('#button_throttle_online_checkin').addEventListener('click', () => {
+      document.querySelector('#baggage-dialog').hidden = false;
+    });
+    document.querySelector('#checkbox_consent-confirmation-checkbox').addEventListener('change', event => {
+      sessionStorage.setItem('fixture-declaration-checked', String(event.target.checked));
+      if (scenario !== 'stuck-next') document.querySelector('#fixture-next').disabled = !event.target.checked;
+    });
+  </script>
+</body>
+</html>
