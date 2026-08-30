@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "flight_replace_with_opaque_random_id",
+  "airline": "ana",
+  "automationLevel": "verified-adapter",
+  "officialCheckinUrl": "https://aswbe.ana.co.jp/webapps/checkin/checkin-search?CONNECTION_KIND=DEU&LANG=en",
+  "departure": "2026-10-25T09:00:00+01:00",
+  "opensBeforeMinutes": 1440,
+  "opensAt": "2026-10-24T08:00:05.000Z",
+  "passengers": [
+    {
+      "firstName": "REPLACE_LOCALLY",
+      "lastName": "REPLACE_LOCALLY"
+    }
+  ],
+  "booking": {
+    "reservation": "REPLACE_LOCALLY"
+  },
+  "segments": [
+    {
+      "flightNumber": "NH000",
+      "origin": "AAA",
+      "destination": "BBB"
+    }
+  ],
+  "retryPolicy": {
+    "attempts": 3,
+    "intervalSeconds": 10
+  },
+  "passengerDeclarationConfirmedAt": null,
+  "retainPrivateRecord": false
+}

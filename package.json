@@ -1,15 +1,16 @@
 {
-  "name": "ana-checkin-playwright",
-  "version": "1.0.0",
+  "name": "airplane-checkin-skill",
+  "version": "2.0.0",
   "private": false,
-  "description": "Guarded Chromium automation for privacy-conscious ANA online check-in",
+  "description": "Privacy-conscious Hermes skill for scheduled, verified multi-airline check-in with a guarded ANA adapter",
   "type": "module",
   "scripts": {
+    "plan": "node src/plan-cli.mjs",
     "status": "node src/ana-checkin.mjs status",
     "checkin": "node src/ana-checkin.mjs checkin",
     "boarding-pass": "node src/ana-checkin.mjs boarding-pass",
     "test": "node --test",
-    "lint": "node --check src/ana-checkin.mjs && node --check src/workflow.mjs && node --check test/ana-checkin.test.mjs",
+    "lint": "node --check src/ana-checkin.mjs && node --check src/checkin-plan.mjs && node --check src/plan-cli.mjs && node --check src/workflow.mjs && node --check test/ana-checkin.test.mjs",
     "secret-scan": "bash scripts/secret-scan.sh"
   },
   "engines": {
@@ -21,14 +22,17 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bee-san/ana-checkin-playwright.git"
+    "url": "git+https://github.com/bee-san/airplane-checkin-skill.git"
   },
   "keywords": [
-    "ana",
     "airline",
+    "airplane",
     "check-in",
+    "hermes-agent",
     "playwright",
-    "chromium",
-    "browser-automation"
+    "browser-automation",
+    "travel-automation",
+    "boarding-pass",
+    "ana"
   ]
 }
