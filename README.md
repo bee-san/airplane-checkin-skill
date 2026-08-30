@@ -1,154 +1,170 @@
 <div align="center">
-  <img src="assets/header.svg" alt="ANA Check-in Playwright: guarded browser automation for privacy-conscious online check-in" width="100%">
+  <img src="assets/header.svg" alt="Airplane Check-in Skill: guarded multi-airline check-in orchestration for Hermes Agent" width="100%">
 
-# ANA Check-in Playwright
+# Airplane Check-in Skill
 
-**Check in with ANA through a guarded Chromium workflow that keeps booking and passport data out of Git.**
+**Schedule and complete airline check-in through official sites, with durable timing, private state, human-controlled declarations, explicit verification, and a field-tested ANA adapter.**
 
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-ff718d.svg)](LICENSE)
 [![Node.js 20+](https://img.shields.io/badge/node.js-20%2B-4ed3a5.svg)](package.json)
-[![Browser: Chromium](https://img.shields.io/badge/browser-Chromium-57d5e8.svg)](#requirements)
-[![Writes: Explicit](https://img.shields.io/badge/check--in_writes-explicit-ffbe55.svg)](#the-declaration-guard)
+[![Hermes skill](https://img.shields.io/badge/Hermes-skill-57d5e8.svg)](SKILL.md)
+[![Writes: guarded](https://img.shields.io/badge/check--in_writes-guarded-ffbe55.svg)](#safety-model)
 
-[Quick install](#quick-install) · [Commands](#commands) · [Safety](#why-use-it) · [Troubleshooting](docs/troubleshooting.md) · [Contributing](CONTRIBUTING.md)
+[Install](#install-as-a-hermes-skill) · [Workflow](#what-it-does) · [Support](#support-model) · [ANA adapter](#ana-verified-adapter) · [Source audit](references/source-audit.md)
 </div>
 
-## Quick install
+## What it does
+
+`airplane-checkin` is a Hermes skill for the whole check-in lifecycle:
+
+1. Find and reconcile the user's airline-issued itinerary.
+2. Verify the airline's current opening and closing policy.
+3. Calculate the opening time from an offset-bearing departure timestamp.
+4. Store booking details privately under an opaque local ID.
+5. Create a durable one-shot Hermes cron job.
+6. Run status before any write.
+7. Complete the current official flow, stopping at CAPTCHA, login secrets, declarations, payments, and unknown states.
+8. Verify every intended passenger and segment.
+9. Retrieve the boarding pass privately, notify with redacted details, and clean up.
+
+The project began as a real ANA Playwright workflow. It now combines the safest ideas found across a live audit of multi-airline, Delta, and Southwest projects without copying their source or importing their unsafe patterns.
+
+## Support model
+
+| Flow | Level | Behaviour |
+|---|---|---|
+| ANA / All Nippon Airways | **Verified adapter** | Read-only status, guarded check-in, local boarding-pass PDF |
+| Southwest, Delta, Air Canada, WestJet, United, American, Alaska, JetBlue | **Guided browser** | Current official site, semantic inspection, human handoff at guarded boundaries |
+| British Airways, easyJet, Ryanair, Wizz Air, Jet2, Lufthansa, other airlines | **Guided browser** | Live policy lookup and conservative official-site assistance |
+
+A generic field selector or URL list is not verified support. New verified adapters need synthetic state fixtures, refusal-path tests, and a controlled real-booking validation. See [the acceptance checklist](references/adapter-acceptance.md).
+
+## Install as a Hermes skill
+
+Clone the repository into a Hermes skills directory:
 
 ```bash
-git clone https://github.com/bee-san/ana-checkin-playwright.git
-cd ana-checkin-playwright
+git clone https://github.com/bee-san/airplane-checkin-skill.git \
+  ~/.hermes/skills/airplane-checkin
+cd ~/.hermes/skills/airplane-checkin
+npm install
+```
+
+Start a fresh Hermes session so the skill registry reloads, then load it explicitly when needed:
+
+```text
+/skill airplane-checkin
+```
+
+The root [`SKILL.md`](SKILL.md) is the operational playbook. It includes scheduling, browser execution, safety rules, failure handling, verification, and cleanup.
+
+## Plan a check-in time
+
+Do not assume every airline opens at T-24 hours. Verify the current rule first, then pass an ISO timestamp with `Z` or an explicit UTC offset:
+
+```bash
+npm run plan -- \
+  --airline ANA \
+  --departure 2026-10-25T09:00:00+01:00 \
+  --opens-before-minutes 1440 \
+  --buffer-seconds 5 \
+  --attempts 3 \
+  --interval-seconds 10
+```
+
+Example output is redacted and contains no booking data:
+
+```json
+{
+  "airline": "ana",
+  "automationLevel": "verified-adapter",
+  "departure": "2026-10-25T09:00:00+01:00",
+  "opensAt": "2026-10-24T08:00:05.000Z",
+  "attempts": [
+    "2026-10-24T08:00:05.000Z",
+    "2026-10-24T08:00:15.000Z",
+    "2026-10-24T08:00:25.000Z"
+  ]
+}
+```
+
+The default starts five seconds after the window opens and uses three serial attempts. The helper rejects timezone-less timestamps and retry plans above ten attempts.
+
+## ANA verified adapter
+
+Install and create a private local environment file:
+
+```bash
 npm install
 cp .env.example .env
 ```
 
-Add your booking details to `.env`, then load them locally:
-
-```bash
-set -a
-source .env
-set +a
-npm run status
-```
-
-`.env`, browser profiles, screenshots and boarding passes are ignored by Git.
-
-## See it
-
-<img src="assets/terminal-demo.svg" alt="Synthetic terminal output showing checked-in and boarding-pass status without booking data" width="100%">
-
-The example is synthetic. Real output reports state without printing the reservation locator, passenger name or passport information.
-
-## Why use it?
-
-A one-off browser script can mix personal data, brittle selectors and legal declarations into the same unchecked flow. This project separates those concerns and stops when ANA shows an unknown state.
-
-| | Manual browser flow | Ad-hoc automation | This project |
-|---|---|---|---|
-| Read-only status check | Manual | Depends on the script | Dedicated `status` command |
-| Booking secrets | Typed into the page | Often embedded in code or shell history | Environment variables in a gitignored file |
-| Restricted-goods declaration | Passenger decides | Easy to tick blindly | Requires explicit passenger confirmation |
-| Unexpected ANA page | Passenger judgement | May retry or click through | Refuses the state and stops |
-| Cookies | Passenger choice | Often accepts everything | Leaves statistics and personalisation off |
-| Boarding-pass output | Manual download | Varies | Private local artifact when ANA exposes its print window |
-
-The reference flow completed a real ANA check-in with Chromium and Playwright. ANA can rate-limit repeated sessions, so the script submits once and never treats a processing screen as proof of success.
-
-## Commands
-
-| Command | What it does | Side effect |
-|---|---|---|
-| `npm run status` | Reads the live booking state | None |
-| `npm run checkin` | Reviews and submits online check-in | Checks in the passenger |
-| `npm run boarding-pass` | Opens ANA's print flow and writes a local PDF | Creates `artifacts/boarding-pass.pdf` |
-
-### Check status
+Fill `.env` locally, then run the read-only status action first:
 
 ```bash
 npm run status
 ```
 
-This is the safest first command and the right command to rerun after a timeout.
-
-### Complete check-in
-
-The passenger must personally read ANA's baggage and restricted-goods information. Only after confirming that they are not carrying prohibited items should they set:
+The passenger must personally review ANA's current baggage and restricted-goods information. Only after the passenger confirms it:
 
 ```bash
-ANA_CONFIRM_BAGGAGE_RESTRICTIONS=YES
-npm run checkin
-```
-
-### Issue a boarding pass
-
-```bash
+ANA_CONFIRM_BAGGAGE_RESTRICTIONS=YES npm run checkin
 npm run boarding-pass
 ```
 
-The pass is stored under `artifacts/` with private file permissions. Never commit it, upload it to an issue, or share its barcode publicly.
+The adapter stops rather than guessing when ANA exposes an unknown booking state, changed declaration, disabled control, incomplete result, or implausible PDF. Browser profiles, screenshots, `.env`, and boarding passes are ignored by Git.
 
-## The declaration guard
+<img src="assets/terminal-demo.svg" alt="Synthetic ANA status output containing no booking or passenger data" width="100%">
 
-The script will not complete check-in unless all of these are true:
+## Safety model
 
-1. ANA reports the booking as `Not Checked-in`.
-2. The review page is visible.
-3. ANA's expected restricted-goods declaration is present.
-4. `ANA_CONFIRM_BAGGAGE_RESTRICTIONS` equals `YES`.
-5. The real checkbox state becomes checked and ANA enables **Next**.
+The skill deliberately rejects risky patterns found during the source audit:
 
-If ANA changes its wording or page structure, the script stops rather than guessing.
+- no CAPTCHA or bot-detection bypass;
+- no stealth browser plugins;
+- no reverse-engineered mobile API keys or generated-header harvesting;
+- no overlapping request races;
+- no request before the published opening time;
+- no generic click on the first Continue or Submit button;
+- no automatic dangerous-goods or hazmat answer;
+- no paid seat, baggage, or upgrade without exact approval;
+- no success claim from a spinner, HTTP 200, screenshot, or unclear result;
+- no PNR, passport data, barcode, or full passenger identity in Git, cron prompts, job names, logs, or notifications.
 
-## Requirements
+See [safety, privacy, and failure states](references/safety-and-failures.md).
 
-- Node.js 20 or newer
-- Google Chrome or Chromium
-- macOS or Linux
+## GitHub projects absorbed as research
 
-Headful Chromium is the default because it was more reliable during the reference flow.
+The source audit covers:
 
-## Configuration
+- the original ANA Playwright adapter;
+- a broad OpenClaw airline-checkin skill;
+- a Delta Playwright project;
+- mature Southwest projects using Python, Ruby, TypeScript, AWS Step Functions, API clients, browser automation, Docker, notifications, and recorded test fixtures.
 
-| Variable | Required | Purpose |
-|---|---:|---|
-| `ANA_RESERVATION_NUMBER` | yes | Six-character booking locator |
-| `ANA_FIRST_NAME` | yes | Given name exactly as ticketed |
-| `ANA_LAST_NAME` | yes | Family name exactly as ticketed |
-| `ANA_CONFIRM_BAGGAGE_RESTRICTIONS` | check-in only | Must be `YES` after personal confirmation |
-| `CHROME_EXECUTABLE` | sometimes | Chrome or Chromium path when auto-detection fails |
-| `HEADLESS` | no | Defaults to `false` |
-| `ANA_PROFILE_DIR` | no | Private browser-profile directory |
-| `ANA_ARTIFACT_DIR` | no | Private output directory |
-| `DEBUG_ARTIFACTS` | no | Saves local screenshots when `true` |
+Useful concepts were reimplemented independently: multi-segment scheduling, airport-local timing, one-shot jobs, deduplication, serial bounded retries, status-specific notifications, human handoff, explicit result states, and fixture-driven tests.
 
-See [`.env.example`](.env.example) for safe placeholders.
+GPL and unlicensed source was not copied. Unsafe ideas were documented and rejected. See the complete [repository-by-repository audit](references/source-audit.md).
 
-## Documentation and support
-
-- [Troubleshooting ANA errors, delayed processing and browser differences](docs/troubleshooting.md)
-- [Security and privacy policy](SECURITY.md)
-- [Contribution guide](CONTRIBUTING.md)
-- [Example environment file](.env.example)
-
-Before opening a public issue, remove reservation locators, names, travel-document data, browser storage, screenshots and boarding-pass barcodes.
-
-## Contributing
-
-Contributions are welcome, especially synthetic test fixtures, safer state detection and documentation fixes. Start with [CONTRIBUTING.md](CONTRIBUTING.md) and run:
+## Development
 
 ```bash
+npm install
+npm test
 npm run lint
 npm run secret-scan
 git diff --check
 ```
 
-Thank you to everyone who helps make travel automation safer and less fragile. 💛
+Every new adapter must follow test-first development and the [adapter acceptance checklist](references/adapter-acceptance.md).
 
-## Project notes
+## Privacy and security
 
-The README structure follows the principles in [3 Tips For Making a Popular Open Source Project in 2025](https://skerritt.blog/make-popular-open-source-projects/): explain the benefit immediately, show the project, make installation copy/pasteable, keep detailed documentation elsewhere, and give users obvious support and contribution paths.
+Read [`SECURITY.md`](SECURITY.md) before using real booking data. Never upload real boarding passes or screenshots to public issues. Use GitHub private vulnerability reporting for code vulnerabilities and remove all personal travel data from reports.
 
-This is an independent utility and is not affiliated with or endorsed by ANA. Airline pages and requirements can change without notice. The passenger remains responsible for accurate travel documents, declarations, airport procedures and compliance with airline and government rules.
+## Independent project
+
+This project is not affiliated with or endorsed by ANA or any other airline. Airline policies, URLs, selectors, identity requirements, and check-in windows can change. The passenger remains responsible for accurate documents, factual declarations, airport deadlines, and compliance with airline and government rules.
 
 ## Licence
 
