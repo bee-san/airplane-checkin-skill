@@ -386,3 +386,5 @@ Do not add third-party code unless its licence is compatible, attribution is pre
 - [Source audit and licence boundaries](references/source-audit.md)
 - [Safety, privacy, and failure taxonomy](references/safety-and-failures.md)
 - [Carrier adapter acceptance checklist](references/adapter-acceptance.md)
+- [Privacy-minimal one-shot cron prompt](templates/cron-prompt.md)
+- [Protected flight-record template](templates/flight-record.example.json)
