@@ -10,7 +10,7 @@
     "checkin": "node src/ana-checkin.mjs checkin",
     "boarding-pass": "node src/ana-checkin.mjs boarding-pass",
     "test": "node --test",
-    "lint": "node --check src/ana-checkin.mjs && node --check src/checkin-plan.mjs && node --check src/plan-cli.mjs",
+    "lint": "node --check src/ana-checkin.mjs && node --check src/checkin-plan.mjs && node --check src/plan-cli.mjs && node --check src/workflow.mjs && node --check test/ana-checkin.test.mjs",
     "secret-scan": "bash scripts/secret-scan.sh"
   },
   "engines": {

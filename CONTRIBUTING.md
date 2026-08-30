@@ -43,3 +43,11 @@ A URL registry or generic selector list is guided-browser coverage, not a verifi
 ## Source research and attribution
 
 Update [`references/source-audit.md`](references/source-audit.md) when a repository materially influences the design. Record its URL, observed activity, licence, useful lesson, and rejected risks. Preserve compatible licence notices when code is reused. Prefer independent reimplementation of concepts when licence compatibility is uncertain.
+
+## Synthetic ANA fixture maintenance
+
+Use the local synthetic HTML fixtures for normal status and check-in development. `npm test` launches Chromium, serves those fixtures only on `127.0.0.1`, and does not contact ANA.
+
+When ANA changes its public page contract, update fixtures only from privacy-scrubbed evidence. Preserve stable IDs, accessible roles, labels and the minimum safety-critical wording needed by the assertions. Never copy a real passenger name, booking locator, flight, seat, passport field, barcode, browser profile or boarding pass into a fixture.
+
+Live write testing must use a booking controlled by the tester and requires the passenger's explicit declaration confirmation.

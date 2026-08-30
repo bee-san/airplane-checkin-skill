@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Online Check-in | Synthetic ANA fixture</title></head>
+<body>
+  <aside id="cookie-banner" aria-label="Cookie settings">
+    <label><input id="Statistics-Slide" type="checkbox" checked> Statistics</label>
+    <label><input id="Personalization-Slide" type="checkbox" checked> Personalisation</label>
+    <button id="ensSave" type="button">Apply selection</button>
+  </aside>
+
+  <main>
+    <h1>Search Method</h1>
+    <form action="/webapps/checkin/checkin-select" method="get">
+      <input id="fixture-scenario" name="scenario" type="hidden" value="not-checked-in">
+      <label for="input_checkinSearchOrderId">Reservation Number</label>
+      <input id="input_checkinSearchOrderId" name="reservation" required>
+      <label for="input_checkinSearchFirstName">First(Given) name</label>
+      <input id="input_checkinSearchFirstName" name="firstName" required>
+      <label for="input_checkinSearchLastName">Last(Family) name</label>
+      <input id="input_checkinSearchLastName" name="lastName" required>
+      <button type="submit" aria-label="Search">Search</button>
+    </form>
+  </main>
+
+  <script>
+    const scenario = new URLSearchParams(location.search).get('scenario') || 'not-checked-in';
+    document.querySelector('#fixture-scenario').value = scenario;
+    document.querySelector('#ensSave').addEventListener('click', () => {
+      sessionStorage.setItem('fixture-cookie-selection', JSON.stringify({
+        statistics: document.querySelector('#Statistics-Slide').checked,
+        personalisation: document.querySelector('#Personalization-Slide').checked
+      }));
+      document.body.dataset.cookiesSaved = 'true';
+      document.querySelector('#cookie-banner').hidden = true;
+    });
+  </script>
+</body>
+</html>
