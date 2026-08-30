@@ -16,6 +16,10 @@ test('ships as a valid airplane-checkin Hermes skill', () => {
   const skill = read(skillPath);
   assert.match(skill, /^---\nname: airplane-checkin\n/m);
   assert.match(skill, /description: "Use when /);
+  const description = skill.match(/^description: "([^"]+)"$/m)?.[1];
+  assert.ok(description);
+  assert.ok(description.length <= 60, `description is ${description.length} characters`);
+  assert.match(description, /\.$/);
   assert.match(skill, /## Safety invariants/);
   assert.match(skill, /## End-to-end workflow/);
   assert.match(skill, /## Verification checklist/);
